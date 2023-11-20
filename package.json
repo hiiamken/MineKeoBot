@@ -14,6 +14,8 @@
     "@discordjs/builders": "^1.7.0",
     "@sapphire/shapeshift": "^3.9.3",
     "ascii-table": "^0.0.9",
+    "discord-anti-spam": "^2.8.1",
+    "discord-pro-antispam": "^1.0.1-0",
     "discord.js": "^14.14.1",
     "fs": "^0.0.1-security",
     "mathjs": "^12.1.0",
