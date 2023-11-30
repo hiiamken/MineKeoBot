@@ -1,0 +1,53 @@
+{
+    "name": "number-to-words",
+    "description": "Contains some util methods for converting numbers into words, ordinal words and ordinal numbers.",
+    "version": "1.2.4",
+    "main": "./src",
+    "browser": "./numberToWords.min.js",
+    "author": "Martin Eneqvist (https://github.com/marlun78)",
+    "contributors": [
+        "Aleksey Pilyugin (https://github.com/pilyugin)",
+        "Jeremiah Hall (https://github.com/jeremiahrhall)",
+        "Adriano Melo (https://github.com/adrianomelo)",
+        "dmrzn (https://github.com/dmrzn)"
+    ],
+    "devDependencies": {
+        "eslint": "5.3.0",
+        "fancy-log": "1.3.2",
+        "gulp": "4.0.0",
+        "gulp-concat": "2.6.1",
+        "gulp-rename": "1.4.0",
+        "gulp-replace": "1.0.0",
+        "gulp-uglify": "3.0.1",
+        "gulp-wrap": "0.14.0",
+        "http-server": "0.11.1",
+        "jasmine": "3.2.0",
+        "phantomjs-prebuilt": "2.1.16",
+        "uglify-save-license": "0.4.1"
+    },
+    "scripts": {
+        "build": "gulp build",
+        "lint": "node node_modules/eslint/bin/eslint.js .",
+        "test": "npm run lint && npm run test:node",
+        "test:node": "jasmine",
+        "test:phantom": "phantomjs ./spec/phantom/run-jasmine3.js 'http://localhost:3456/spec/'",
+        "test:server": "http-server ./ -p 3456 -c-1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/marlun78/number-to-words"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/marlun78/number-to-words/issues"
+    },
+    "homepage": "https://github.com/marlun78/number-to-words",
+    "keywords": [
+        "converter",
+        "number",
+        "ordinal",
+        "string",
+        "tool",
+        "word"
+    ]
+}
