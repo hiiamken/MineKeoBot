@@ -7,6 +7,19 @@ module.exports = {
         .setDescription('Hiển thị bảng xếp hạng người chơi counting.'),
 
     async execute(interaction) {
+
+        const allowedChannelId = '1181147913703936021';
+
+        if (interaction.channelId !== allowedChannelId) {
+            const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
+            const channelMention = `<#${allowedChannel.id}>`;
+
+            return interaction.reply({
+                content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
+                ephemeral: true,
+            });
+        }
+
         try {
             // Check if the interaction has already been replied to or deferred
             if (!interaction.deferred && !interaction.replied) {
@@ -23,8 +36,8 @@ module.exports = {
                 .setDescription(`Không thể lấy danh sách người chơi.`)
                 .setColor(0xECB2FB);
 
-            // Use interaction.followUp() for ephemeral replies after initial defer
-            await interaction.followUp({ embeds: [errEmbed], ephemeral: true });
+            // Use interaction.followUp() without ephemeral flag for non-ephemeral replies
+            await interaction.followUp({ embeds: [errEmbed] });
         }
     },
 };
@@ -53,10 +66,9 @@ async function updateRankings(interaction) {
     embed.setDescription(description);
 
     try {
-        // Use interaction.followUp() for ephemeral replies
+        // Use interaction.followUp() without ephemeral flag for non-ephemeral replies
         await interaction.followUp({
             embeds: [embed],
-            ephemeral: true,
         });
 
         // Schedule the next update after 5 minutes

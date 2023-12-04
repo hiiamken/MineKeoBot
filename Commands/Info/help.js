@@ -5,6 +5,19 @@ module.exports = {
         .setName("help")
         .setDescription("Hiển thị tất cả các lệnh của bot MineKeo."),
     async execute(interaction) {
+
+        const allowedChannelId = '1181147913703936021';
+
+        if (interaction.channelId !== allowedChannelId) {
+            const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
+            const channelMention = `<#${allowedChannel.id}>`;
+
+            return interaction.reply({
+                content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
+                ephemeral: true,
+            });
+        }
+
         const emojis = {
             info: "📜",
             moderation: "🛠️",
