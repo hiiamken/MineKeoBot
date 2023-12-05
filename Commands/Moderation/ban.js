@@ -1,10 +1,11 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("ban")
         .setDescription("Cấm một người chơi khỏi máy chủ.")
-        .setDefaultPermission(false) // Tắt quyền mặc định
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDMPermission(false)
         .addUserOption(option =>
             option.setName("name")
                 .setDescription("Tên người muốn cấm.")

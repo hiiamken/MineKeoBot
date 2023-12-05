@@ -17,6 +17,7 @@
     "ascii-table": "^0.0.9",
     "axios": "^1.6.2",
     "cpu-stat": "^2.0.1",
+    "dayjs": "^1.11.10",
     "discord-anti-spam": "^2.8.1",
     "discord-gamecord": "^4.4.1",
     "discord-html-transcripts": "^3.2.0",

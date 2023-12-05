@@ -5,7 +5,8 @@
         data: new SlashCommandBuilder()
             .setName("mute")
             .setDescription("Câm lặng một người trong máy chủ.")
-            .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+            .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+            .setDMPermission(false)
             .addUserOption(option => 
                 option.setName("name")
                     .setDescription("Lựa chọn người muốn câm lặng.")
