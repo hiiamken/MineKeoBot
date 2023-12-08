@@ -20,6 +20,13 @@ module.exports = {
         if (!msg.guild) return;
         if (msg.author?.bot) return;
 
+        const allowedChannelIds = ["1122039700430016594", "1170763165534003300", "1126163060206342185"]; // Thay thế bằng ID kênh bạn muốn cho phép
+
+    	if (!allowedChannelIds.includes(msg.channel.id)) {
+        // Nếu ID kênh không nằm trong danh sách cho phép, không xử lý gửi link
+        	return;
+    	}
+
         let requireDB = await linkSchema.findOne({ _id: msg.guild.id });
         const data = await antilinkLogSchema.findOne({ Guild: msg.guild.id });
         if (!data) return;
@@ -72,7 +79,7 @@ module.exports = {
                                 embeds: [
                                     new EmbedBuilder()
                                         .setColor(0xECB2FB)
-                                        .setDescription(`<@${user.id}> đã bị cảnh báo vì gửi một liên kết.\n\`\`\`${msg.content}\`\`\``)
+                                        .setDescription(`<@${user.id}> đã bị cảnh báo vì gửi một liên kết trong kênh ${msg.channel.name}.\n\`\`\`${msg.content}\`\`\``)
                                         .setFooter({ text: `ID Người Dùng: ${user.id}` })
                                         .setTimestamp()
                                 ],
