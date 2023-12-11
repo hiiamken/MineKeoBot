@@ -1,48 +1,91 @@
-const { SlashCommandBuilder } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ActionRowBuilder,
+} = require("discord.js");
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('avatar')
-        .setDescription('Xem avatar của bạn hoặc người khác')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Người bạn muốn xem avatar')
-                .setRequired(false)
-        ),
-    async execute(interaction) {
+  data: new SlashCommandBuilder()
+    .setName("avatar")
+    .setDescription(`Lấy avatar của người dùng từ máy chủ`)
+    .setDMPermission(false)
+    .addUserOption((option) =>
+      option
+        .setName("user")
+        .setDescription(`Avatar của người dùng cần lấy`)
+        .setRequired(false)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("id")
+        .setDescription(
+          `Nếu người dùng đã rời khỏi, bạn có thể nhập ID người dùng`
+        )
+        .setRequired(false)
+    ),
+  async execute(interaction) {
+    const { client, member } = interaction;
+    const userOption = interaction.options.getUser("user");
+    const idOption = interaction.options.getString("id");
 
-        const allowedChannelId = '1181147913703936021';
+    let user;
 
-        if (interaction.channelId !== allowedChannelId) {
-            const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
-            const channelMention = `<#${allowedChannel.id}>`;
+    if (userOption) {
+      user = userOption;
+    } else if (idOption) {
+      try {
+        user = await client.users.fetch(idOption);
+      } catch (error) {
+        console.error(error);
+        await interaction.reply(
+          "Lỗi khi lấy thông tin người dùng. Vui lòng đảm bảo ID được cung cấp là hợp lệ."
+        );
+        return;
+      }
+    } else {
+      user = member.user;
+    }
 
-            return interaction.reply({
-                content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
-                ephemeral: true,
-            });
-        }
+    const userAvatar = user.displayAvatarURL({ size: 2048, dynamic: true });
 
-        try {
-            const user = interaction.options.getUser('user') || interaction.user;
-            const avatarURL = user.displayAvatarURL({
-                format: 'png',
-                size: 4096,
-                dynamic: true
-            });
+    const embed = new EmbedBuilder()
+      .setColor("#eeeeee")
+      .setAuthor({
+        name: `Avatar của ${user.username}`,
+        iconURL: `${user.displayAvatarURL({ size: 64, dynamic: true })}`,
+      })
+      .setImage(userAvatar)
+      .setTimestamp()
+      .setFooter({ text: `ID Người dùng: ${user.id}` });
 
-            await interaction.reply({
-                content: `Đây là avatar của ${user.tag}:`,
-                embeds: [
-                    {
-                        image: { url: avatarURL },
-                        title: `Avatar của ${user.tag}`
-                    }
-                ]
-            });
-        } catch (error) {
-            console.error(error);
-            await interaction.reply({ content: 'Lỗi rồi! Bạn hãy thử lại xem', ephemeral: true });
-        }
-    },
+    const png = new ButtonBuilder()
+      .setLabel("PNG")
+      .setStyle(ButtonStyle.Link)
+      .setURL(user.displayAvatarURL({ size: 2048, format: "png" }));
+
+    const jpg = new ButtonBuilder()
+      .setLabel("JPG")
+      .setStyle(ButtonStyle.Link)
+      .setURL(user.displayAvatarURL({ size: 2048, format: "jpg" }));
+
+    const jpeg = new ButtonBuilder()
+      .setLabel("JPEG")
+      .setStyle(ButtonStyle.Link)
+      .setURL(user.displayAvatarURL({ size: 2048, format: "jpeg" }));
+
+    const gif = new ButtonBuilder()
+      .setLabel("GIF")
+      .setStyle(ButtonStyle.Link)
+      .setURL(user.displayAvatarURL({ size: 2048, format: "gif" }));
+
+    const row = new ActionRowBuilder().addComponents(png, jpg, jpeg, gif);
+
+    await interaction.reply({
+      embeds: [embed],
+      ephemeral: true,
+      components: [row],
+    });
+  },
 };

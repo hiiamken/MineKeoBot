@@ -22,6 +22,8 @@ module.exports = {
             info: "📜",
             moderation: "🛠️",
             general: "⚙️",
+            images: "🎞",
+            levels: "📶",
         };
 
         const directories = new Set(interaction.client.commands.map((cmd) => cmd.folder));
@@ -51,6 +53,8 @@ module.exports = {
             info: "Các lệnh cho người mới.",
             moderation: "Các lệnh chỉ STAFF được dùng.",
             general: "Cách lệnh tất cả mọi người có thể dùng.",
+            images: "Các lệnh tạo hình ảnh",
+            levels: "Các lệnh về cấp",
         };
 
         const logoURL = 'https://cdn.discordapp.com/attachments/1174937441556238396/1174941493660766218/logo_1500x1500.png?ex=65696c89&is=6556f789&hm=ea7a182a97eb4d2f81b82060e96d3934462b2efb8b8c25c901ff57903847c8d1';
