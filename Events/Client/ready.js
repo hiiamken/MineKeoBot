@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const config = require("../../config.json");
-const { Activity, ActivityType } = require('discord.js');
+const { ActivityType } = require('discord.js');
+const Levels = require("discord.js-leveling");
 
 module.exports = {
     name: "ready",
@@ -13,6 +14,8 @@ module.exports = {
         } catch (error) {
             console.error('Kết nối MongoDB thất bại:', error);
         }
+
+        Levels.setURL(config.mongodb);
 
         console.log(`${client.user.username} đang sẵn sàng!`);
 
