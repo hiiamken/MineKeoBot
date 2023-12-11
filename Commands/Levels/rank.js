@@ -10,6 +10,17 @@ module.exports = {
       option.setName("user").setDescription("Lựa chọn một người")
     ),
   async execute(interaction) {
+
+    if (interaction.channelId !== allowedChannelId) {
+      const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
+      const channelMention = `<#${allowedChannel.id}>`;
+
+      return interaction.reply({
+          content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
+          ephemeral: true,
+      });
+  }
+
     const { options, guildId, user } = interaction;
 
     console.log(Levels.xpFor(1));

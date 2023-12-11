@@ -6,7 +6,19 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('rankxp')
         .setDescription('Hiển thị bảng xếp hạng kinh nghiệm.'),
+    
     async execute(interaction, client) {
+
+        if (interaction.channelId !== allowedChannelId) {
+            const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
+            const channelMention = `<#${allowedChannel.id}>`;
+
+            return interaction.reply({
+                content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
+                ephemeral: true,
+            });
+        }
+
         const { guildId } = interaction;
 
         const rawLeaderboard = await Levels.fetchLeaderboard(guildId, 10);
