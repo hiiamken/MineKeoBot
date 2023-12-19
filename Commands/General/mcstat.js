@@ -8,6 +8,18 @@ module.exports = {
       option.setName("ip").setDescription("Địa chỉ IP và port của máy chủ").setRequired(true)
     ),
   async execute(interaction) {
+
+    const allowedChannelId = '1181147913703936021';
+
+        if (interaction.channelId !== allowedChannelId) {
+            const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
+            const channelMention = `<#${allowedChannel.id}>`;
+
+            return interaction.reply({
+                content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
+                ephemeral: true,
+            });
+        }
     try {
       if (!interaction.isCommand()) {
         console.error('Invalid interaction type.');
@@ -41,7 +53,7 @@ module.exports = {
 
       await interaction.reply({
         embeds: [embed],
-        ephemeral: true,
+        ephemeral: false,
       });
     } catch (error) {
       console.error("Error processing command:", error);

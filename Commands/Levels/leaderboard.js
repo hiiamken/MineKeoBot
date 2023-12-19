@@ -3,54 +3,66 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const Levels = require("discord.js-leveling");
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('rankxp')
-        .setDescription('Hiển thị bảng xếp hạng kinh nghiệm.'),
-    
-    async execute(interaction, client) {
+  data: new SlashCommandBuilder()
+    .setName("rankxp")
+    .setDescription("Hiển thị bảng xếp hạng kinh nghiệm."),
 
-        if (interaction.channelId !== allowedChannelId) {
-            const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
-            const channelMention = `<#${allowedChannel.id}>`;
+  async execute(interaction, client) {
+    const allowedChannelId = "1181147913703936021";
 
-            return interaction.reply({
-                content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
-                ephemeral: true,
-            });
-        }
+    if (interaction.channelId !== allowedChannelId) {
+      const allowedChannel =
+        interaction.guild.channels.cache.get(allowedChannelId);
+      const channelMention = `<#${allowedChannel.id}>`;
 
-        const { guildId } = interaction;
+      return interaction.reply({
+        content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
+        ephemeral: true,
+      });
+    }
 
-        const rawLeaderboard = await Levels.fetchLeaderboard(guildId, 10);
+    const { guildId } = interaction;
 
-        if (rawLeaderboard.length < 1) return interaction.reply("Bảng xếp hạng đang trống.");
+    const rawLeaderboard = await Levels.fetchLeaderboard(guildId, 10);
 
-        const embed = new EmbedBuilder();
-        const leaderboard = await Levels.computeLeaderboard(client, rawLeaderboard, true);
+    if (rawLeaderboard.length < 1)
+      return interaction.reply("Bảng xếp hạng đang trống.");
 
-        const lb = leaderboard.map((e, index) => {
-            let medalEmoji = "";
-            if (index === 0) {
-                medalEmoji = "🥇";
-            } else if (index === 1) {
-                medalEmoji = "🥈";
-            } else if (index === 2) {
-                medalEmoji = "🥉";
-            }
+    const embed = new EmbedBuilder();
+    const leaderboard = await Levels.computeLeaderboard(
+      client,
+      rawLeaderboard,
+      true
+    );
 
-            return `#${e.position} - ${e.username} - Cấp ${e.level} (XP: ${e.xp.toLocaleString()}/${Levels.xpFor(e.level + 1)}) ${medalEmoji}`;
-        });
+    const lb = leaderboard.map((e, index) => {
+      let medalEmoji = "";
+      if (index === 0) {
+        medalEmoji = "🥇";
+      } else if (index === 1) {
+        medalEmoji = "🥈";
+      } else if (index === 2) {
+        medalEmoji = "🥉";
+      }
 
-        embed.setTitle("Bảng xếp hạng kinh nghiệm máy chủ")
-            .setDescription(lb.join("\n"))
-            .setColor(0xecb2fb)
-            .setTimestamp()
-            .setFooter({
-                text: "Dữ liệu sẽ tự động cập nhật mỗi 1 phút",
-                iconURL:
-                  "https://cdn.discordapp.com/attachments/1174937441556238396/1174941493660766218/logo_1500x1500.png?ex=65696c89&is=6556f789&hm=ea7a182a97eb4d2f81b82060e96d3934462b2efb8b8c25c901ff57903847c8d1",
-              });
+      return `#${e.position} - ${e.username} - Cấp ${
+        e.level
+      } (XP: ${e.xp.toLocaleString()}/${Levels.xpFor(
+        e.level + 1
+      )}) ${medalEmoji}`;
+    });
 
-        return interaction.reply({ embeds: [embed] });
-    },
+    embed
+      .setTitle("Bảng xếp hạng kinh nghiệm máy chủ")
+      .setDescription(lb.join("\n"))
+      .setColor(0xecb2fb)
+      .setTimestamp()
+      .setFooter({
+        text: "Dữ liệu sẽ tự động cập nhật mỗi 1 phút",
+        iconURL:
+          "https://cdn.discordapp.com/attachments/1174937441556238396/1174941493660766218/logo_1500x1500.png?ex=65696c89&is=6556f789&hm=ea7a182a97eb4d2f81b82060e96d3934462b2efb8b8c25c901ff57903847c8d1",
+      });
+
+    return interaction.reply({ embeds: [embed] });
+  },
 };

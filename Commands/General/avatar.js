@@ -27,14 +27,17 @@ module.exports = {
     ),
   async execute(interaction) {
 
-    if (interaction.channelId !== allowedChannelId) {
-        const allowedChannel = interaction.guild.channels.cache.get(allowedChannelId);
-        const channelMention = `<#${allowedChannel.id}>`;
+    const allowedChannelId = "1181147913703936021";
 
-        return interaction.reply({
-            content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
-            ephemeral: true,
-        });
+    if (interaction.channelId !== allowedChannelId) {
+      const allowedChannel =
+        interaction.guild.channels.cache.get(allowedChannelId);
+      const channelMention = `<#${allowedChannel.id}>`;
+
+      return interaction.reply({
+        content: `Bạn chỉ có thể sử dụng lệnh này trong ${channelMention}.`,
+        ephemeral: true,
+      });
     }
 
     const { client, member } = interaction;
