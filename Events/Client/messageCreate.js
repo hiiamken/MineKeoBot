@@ -17,7 +17,15 @@ module.exports = {
         if (!msg.guild) return;
         if (msg.author?.bot) return;
 
-        // Lấy cấu hình từ cơ sở dữ liệu
+        // Thêm mảng allowedChannels tại đây
+        const allowedChannels = ["1181147913703936021", "1174937441556238396"]; // Thay thế bằng các ID kênh được phép của bạn
+
+        // Kiểm tra xem tin nhắn có được gửi trong kênh được phép không
+        if (allowedChannels.includes(msg.channel.id)) {
+            // Không làm gì cả và thoát khỏi hàm
+            return;
+        }
+
         let requireDB = await linkSchema.findOne({ _id: msg.guild.id });
         const data = await antilinkLogSchema.findOne({ Guild: msg.guild.id });
         if (!data) return;
@@ -31,52 +39,42 @@ module.exports = {
             const member = msg.guild.members.cache.get(user.id);
 
             if (member.permissions.has(memberPerms)) return;
-
             else {
-                // Tạo thông báo khi phát hiện liên kết
-                const e = new EmbedBuilder()
-                    .setDescription(`:warning: | Liên kết không được phép trên máy chủ này, ${user}.`)
-                    .setColor(0xecb2fb);
-
                 const linkRegex = /(https?:\/\/[^\s]+|discord\.gg\/[^\s]+)/gi;
-
                 const content = msg.content.toLowerCase();
                 const words = content.split(' ');
 
+                let hasLink = false; // Biến để kiểm tra xem có liên kết trong tin nhắn không
+
                 for (const word of words) {
                     if (linkRegex.test(word)) {
-                        msg.delete();
-                        const logChannel = client.channels.cache.get(data.logChannel);
+                        hasLink = true;
+                        break; // Nếu có liên kết, thoát khỏi vòng lặp
+                    }
+                }
 
-                        if (!logChannel) return;
-                        else {
-                            // Tạo nút bấm cho việc xử lý vi phạm
-                            const buttons = new ActionRowBuilder()
-                                .addComponents(
-                                    new ButtonBuilder()
-                                        .setLabel("Timeout")
-                                        .setEmoji("🔨")
-                                        .setCustomId("linktimeout")
-                                        .setStyle(ButtonStyle.Secondary),
-                                    new ButtonBuilder()
-                                        .setLabel("Kick")
-                                        .setEmoji("🛠️")
-                                        .setCustomId("linkkick")
-                                        .setStyle(ButtonStyle.Danger)
-                                );
+                if (hasLink) {
+                    msg.delete();
 
-                            // For sending message to log channel.
-                            const logMsg = await logChannel.send({
-                                embeds: [
-                                    new EmbedBuilder()
-                                        .setColor(0xecb2fb)
-                                        .setDescription(`<@${user.id}> đã bị cảnh báo vì gửi link.\n\`\`\`${msg.content}\`\`\``)
-                                        .setFooter({ text: `User ID: ${user.id}` })
-                                        .setTimestamp()
-                                ],
-                                components: [buttons]
-                            });
+                    // Gửi cảnh báo
+                    const warningEmbed = new EmbedBuilder()
+                        .setDescription(`:warning: | Liên kết không được phép trên máy chủ này, ${user}.`)
+                        .setColor(0xecb2fb);
 
+                    msg.channel.send({ embeds: [warningEmbed] }).catch(console.error);
+
+                    const logChannel = client.channels.cache.get(data.logChannel);
+
+                    if (logChannel) {
+                        const logMsg = await logChannel.send({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor(0xecb2fb)
+                                    .setDescription(`<@${user.id}> đã bị cảnh báo vì gửi link.\n\`\`\`${msg.content}\`\`\``)
+                                    .setFooter({ text: `User ID: ${user.id}` })
+                                    .setTimestamp()
+                            ],
+                        });
                             const col = await logMsg.createMessageComponentCollector({
                                 componentType: ComponentType.Button,
                             });
@@ -187,6 +185,5 @@ module.exports = {
                     };
                 };
             };
-        };
     },
 };
