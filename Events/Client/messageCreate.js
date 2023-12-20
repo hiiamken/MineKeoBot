@@ -13,20 +13,11 @@ const ms = require("ms");
 
 module.exports = {
     name: "messageCreate",
-    /**
-     * @param {Client} client
-     */
     async execute(msg, client) {
         if (!msg.guild) return;
         if (msg.author?.bot) return;
 
-        const allowedChannelIds = ["1122039700430016594", "1170763165534003300", "1126163060206342185"]; // Thay thế bằng ID kênh bạn muốn cho phép
-
-    	if (!allowedChannelIds.includes(msg.channel.id)) {
-        // Nếu ID kênh không nằm trong danh sách cho phép, không xử lý gửi link
-        	return;
-    	}
-
+        // Lấy cấu hình từ cơ sở dữ liệu
         let requireDB = await linkSchema.findOne({ _id: msg.guild.id });
         const data = await antilinkLogSchema.findOne({ Guild: msg.guild.id });
         if (!data) return;
@@ -35,20 +26,19 @@ module.exports = {
         if (requireDB.logs === false) return;
 
         if (requireDB.logs === true) {
-
             const memberPerms = data.Perms;
-
             const user = msg.author;
             const member = msg.guild.members.cache.get(user.id);
 
             if (member.permissions.has(memberPerms)) return;
 
             else {
+                // Tạo thông báo khi phát hiện liên kết
                 const e = new EmbedBuilder()
-                    .setDescription(`:warning: | Liên kết không được phép trong server này, ${user}.`)
-                    .setColor(0xECB2FB);
+                    .setDescription(`:warning: | Liên kết không được phép trên máy chủ này, ${user}.`)
+                    .setColor(0xecb2fb);
 
-                const linkRegex = /(https?:\/\/[^\s]+|discord\.gg\/[^\s]+)/gi; // Biểu thức chính quy để kiểm tra URL và liên kết discord.gg/
+                const linkRegex = /(https?:\/\/[^\s]+|discord\.gg\/[^\s]+)/gi;
 
                 const content = msg.content.toLowerCase();
                 const words = content.split(' ');
@@ -60,6 +50,7 @@ module.exports = {
 
                         if (!logChannel) return;
                         else {
+                            // Tạo nút bấm cho việc xử lý vi phạm
                             const buttons = new ActionRowBuilder()
                                 .addComponents(
                                     new ButtonBuilder()
@@ -74,13 +65,13 @@ module.exports = {
                                         .setStyle(ButtonStyle.Danger)
                                 );
 
-                            // Gửi tin nhắn đến kênh log.
+                            // For sending message to log channel.
                             const logMsg = await logChannel.send({
                                 embeds: [
                                     new EmbedBuilder()
-                                        .setColor(0xECB2FB)
-                                        .setDescription(`<@${user.id}> đã bị cảnh báo vì gửi một liên kết trong kênh ${msg.channel.name}.\n\`\`\`${msg.content}\`\`\``)
-                                        .setFooter({ text: `ID Người Dùng: ${user.id}` })
+                                        .setColor(0xecb2fb)
+                                        .setDescription(`<@${user.id}> đã bị cảnh báo vì gửi link.\n\`\`\`${msg.content}\`\`\``)
+                                        .setFooter({ text: `User ID: ${user.id}` })
                                         .setTimestamp()
                                 ],
                                 components: [buttons]
@@ -97,8 +88,8 @@ module.exports = {
                                             return m.reply({
                                                 embeds: [
                                                     new EmbedBuilder()
-                                                        .setColor(0xECB2FB)
-                                                        .setDescription(`:warning: | ${m.user} thiếu quyền *moderate_members*, vui lòng thử lại sau khi bạn có quyền này.`)
+                                                        .setColor(0xecb2fb)
+                                                        .setDescription(`:warning: | ${m.user} thiếu quyền *moderate_members*, vui lòng thử lại sau khi bạn có được quyền này.`)
                                                 ],
                                                 ephemeral: true,
                                             });
@@ -107,8 +98,8 @@ module.exports = {
                                             return m.reply({
                                                 embeds: [
                                                     new EmbedBuilder()
-                                                        .setDescription(`:warning: | Đối tượng được chỉ định có thể đã rời khỏi server.`)
-                                                        .setColor(0xECB2FB)
+                                                        .setDescription(`:warning: | Mục tiêu được chỉ định rất có thể đã rời khỏi máy chủ.`)
+                                                        .setColor(0xecb2fb)
                                                 ],
                                                 ephemeral: true,
                                             });
@@ -117,19 +108,19 @@ module.exports = {
                                         m.reply({
                                             embeds: [
                                                 new EmbedBuilder()
-                                                    .setColor(0xECB2FB)
-                                                    .setDescription(`:white_check_mark: | ${msg.member} đã bị cấm gửi tin nhắn trong 10 phút.`)
+                                                    .setColor(0xecb2fb)
+                                                    .setDescription(`:white_check_mark: | ${msg.member} đã bị mute trong 10 phút.`)
                                             ],
                                             ephemeral: true,
                                         });
 
                                         const timeoutEmbed = new EmbedBuilder()
-                                            .setTitle("Cấm Gửi Tin Nhắn")
+                                            .setTitle("Timeout")
                                             .setDescription(
-                                                `:warning: | Bạn đã bị cấm gửi tin nhắn từ \`${msg.guild.name}\` vì gửi liên kết.`
+                                                `:warning: | Bạn đã bị mute từ \`${msg.guild.name}\` vì gửi link.`
                                             )
                                             .setTimestamp()
-                                            .setColor(0xECB2FB)
+                                            .setColor(0xecb2fb);
 
                                         msg.member
                                             .send({
@@ -147,26 +138,26 @@ module.exports = {
                                             return m.reply({
                                                 embeds: [
                                                     new EmbedBuilder()
-                                                        .setColor(0xECB2FB)
-                                                        .setDescription(`:warning: | ${m.user} thiếu quyền *kick_members*, vui lòng thử lại sau khi bạn có quyền này.`)
+                                                        .setColor(0xecb2fb)
+                                                        .setDescription(`:warning: | ${m.user} is missing the *kick_members* permission, please try again after you gain this permission.`)
                                                 ],
                                                 ephemeral: true,
                                             });
 
                                         const kickEmbed = new EmbedBuilder()
-                                            .setTitle("Đã Đuổi")
+                                            .setTitle("Kicked")
                                             .setDescription(
-                                                `:warning: | Bạn đã bị đuổi khỏi \`${msg.guild.name}\` vì gửi liên kết.`
+                                                `:warning: | You have been kicked from \`${msg.guild.name}\` for sending links.`
                                             )
                                             .setTimestamp()
-                                            .setColor(warningColor);
+                                            .setColor(0xecb2fb);
 
                                         if (!msg.member) {
                                             return m.reply({
                                                 embeds: [
                                                     new EmbedBuilder()
-                                                        .setDescription(`:warning: | Đối tượng được chỉ định có thể đã rời khỏi server.`)
-                                                        .setColor(0xECB2FB)
+                                                        .setDescription(`:warning: | The target specified has most likely left the server.`)
+                                                        .setColor(0xecb2fb)
                                                 ],
                                                 ephemeral: true,
                                             });
@@ -175,8 +166,8 @@ module.exports = {
                                         m.reply({
                                             embeds: [
                                                 new EmbedBuilder()
-                                                    .setColor(0xECB2FB)
-                                                    .setDescription(`:white_check_mark: | ${msg.member} đã bị đuổi khỏi server thành công.`)
+                                                    .setColor(0xecb2fb)
+                                                    .setDescription(`:white_check_mark: | ${msg.member} has been successfully kicked from the server.`)
                                             ],
                                             ephemeral: true,
                                         });
@@ -186,7 +177,7 @@ module.exports = {
                                                 embeds: [kickEmbed],
                                             })
                                             .then(() => {
-                                                msg.member.kick({ reason: "Gửi liên kết." });
+                                                msg.member.kick({ reason: "Sending links." });
                                             });
                                     }
                                         break;
