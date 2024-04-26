@@ -1,4 +1,3 @@
-// commands/ping.js
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const Levels = require("discord.js-leveling");
 

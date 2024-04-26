@@ -152,7 +152,6 @@ async function isValidWordInDictionary(word) {
       },
     });
 
-    console.log("API response:", response.data);
 
     const hasDefinition =
       response.data &&

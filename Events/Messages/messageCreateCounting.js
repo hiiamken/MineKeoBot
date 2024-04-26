@@ -1,146 +1,69 @@
 const countingScheme = require("../../Models/Counting");
 const Ranking = require("../../Models/Ranking");
-const math = require("mathjs");
 
 module.exports = {
-    name: "messageCreate",
+  name: "messageCreate",
 
-    async execute(message) {
-        const guildId = message.guild.id;
+  async execute(message) {
+    const guildId = message.guild.id;
 
-        if (message.author.bot) return;
+    if (message.author.bot) return;
 
-        // Updated regex to better capture expressions with parentheses and exponentiation
-        const isMathExpression = /^[\d\(\)\^]+(\s*[\+\-\*\/\^]\s*[\d\(\)\^]+)*$/.test(message.content);
+    // Kiểm tra xem nội dung tin nhắn có phải là số hoặc biểu thức toán học không
+    const isNumberOrExpression = /^[\d+\-*/\s,^sqrt().]+$/.test(
+      message.content
+    );
 
-        countingScheme.findOne({ GuildID: guildId }, async (err, data) => {
-            if (!data || !data.Channel || !isMathExpression) return;
+    countingScheme.findOne({ GuildID: guildId }, async (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
 
-            if (message.channel.id === data.Channel) {
-                if (!data.isNumberEntered) {
-                    try {
-                        if (data.LastPerson === message.author.id) {
-                            // Người chơi đã nhập số trong lượt hiện tại
-                            // Thêm react ❌
-                            message.react("<a:cerberusbap:1179405311933685880>");
+      if (!data || !data.Channel || !isNumberOrExpression) return;
 
-                            // Gửi thông báo mới
-                            message.channel.send(`Bạn đã chơi không đúng luật, <@${message.author.id}>! Bạn chỉ có thể nhập một số trong cùng một lượt chơi`);
+      if (message.channel.id === data.Channel) {
+        try {
+          // Thay thế "^" bằng "**", "pow" và "sqrt" bằng các toán tử tương ứng của JavaScript
+          const replacedContent = message.content
+            .replace(/\^/g, "**")
+            .replace(/pow/g, "**")
+            .replace(/sqrt/g, "Math.sqrt")
+            .replace(/,/g, ".");
+          const evaluatedNumber = eval(replacedContent);
+          const enteredNumber = Math.round(evaluatedNumber);
 
-                            // Reset lại trò chơi
-                            data.Count = 1;
-                            data.isNumberEntered = false;
-                            data.LastPerson = "";
-                        } else {
-                            // Tạo một hàm xử lý dấu '^'
-                            const processExponentiation = (expr) => {
-                                return expr.replace(/\^/g, (match, offset, str) => {
-                                    const prevChar = str[offset - 1];
-                                    const nextChar = str[offset + 1];
-
-                                    if (prevChar === ')' && nextChar === '(') {
-                                        // Nếu có '^' giữa hai dấu ngoặc, thì thay thế bằng '**'
-                                        return '**';
-                                    } else {
-                                        // Ngược lại, giữ nguyên '^'
-                                        return match;
-                                    }
-                                });
-                            };
-
-                            // Áp dụng hàm xử lý cho biểu thức
-                            const processedExpression = processExponentiation(message.content);
-
-                            const result = math.evaluate(processedExpression);
-
-                            // Kiểm tra nếu kết quả là số hợp lệ (finite và là số nguyên)
-                            if (!isNaN(result) && isFinite(result) && result === Math.floor(result)) {
-                                if (result === 100) {
-                                    // Nếu số là 100, thêm react "💯" và tăng số lần trả lời đúng cho người chơi
-                                    message.react("💯");
-                                    data.Count++;
-                                    data.isNumberEntered = true;
-
-                                    const userRanking = await Ranking.findOne({ userId: message.author.id });
-
-                                    if (userRanking) {
-                                        userRanking.correctCount++;
-                                        await userRanking.save();
-                                    } else {
-                                        await Ranking.create({ userId: message.author.id, correctCount: 1 });
-                                    }
-
-                                    // Thêm thông báo cho các mốc
-                                    await checkMilestones(userRanking.correctCount, message);
-
-                                    data.LastPerson = message.author.id;
-                                    
-                                } else if (result === data.Count) {
-                                    message.react("<:PinkCheck:1179406997997748336>");
-                                    data.Count++;
-                                    data.isNumberEntered = true;
-
-                                    // Tăng số lần trả lời đúng cho người chơi
-                                    const userRanking = await Ranking.findOne({ userId: message.author.id });
-
-                                    if (userRanking) {
-                                        userRanking.correctCount++;
-                                        await userRanking.save();
-                                    } else {
-                                        await Ranking.create({ userId: message.author.id, correctCount: 1 });
-                                    }
-
-                                    // Kiểm tra và thông báo về các mốc
-                                    await checkMilestones(userRanking.correctCount, message);
-                                } else {
-                                    // Thêm react ❌
-                                    message.react("<a:cerberusbap:1179405311933685880>");
-
-                                    // Gửi thông báo mới
-                                    message.channel.send(`${message.author} đã phá hỏng chuỗi ở số **${data.Count}**, bạn có thể chửi nhưng hãy chửi một cách lịch sự! `);
-
-                                    // Reset lại trò chơi
-                                    data.Count = 1;
-                                    data.isNumberEntered = true; // Đặt thành true khi số đã được nhập
-                                }
-
-                                data.LastPerson = message.author.id;
-                            } else {
-                                // Nếu kết quả không hợp lệ, thông báo và không tăng Count
-                                message.react("<a:cerberusbap:1179405311933685880>");
-                                message.channel.send(`Kết quả \`${result}\` không hợp lệ, <@${message.author.id}>! Hãy nhập một phép tính hợp lệ.`);
-
-                                // Reset lại trò chơi
-                                data.Count = 1;
-                                data.isNumberEntered = true; // Đặt thành true khi số đã được nhập
-                                data.LastPerson = "";
-                            }
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    } finally {
-                        // Save data after processing
-                        await data.save(); // Lưu dữ liệu sau mỗi lượt chơi
-                    }
-                } else {
-                    // Người chơi đã nhập số trong lượt hiện tại
-                    // Thêm react ❌
-                    message.react("<a:cerberusbap:1179405311933685880>");
-
-                    // Gửi thông báo mới
-                    message.channel.send(`Bạn đã chơi không đúng luật, <@${message.author.id}>! Bạn chỉ có thể nhập một số trong cùng một lượt chơi`);
-                }
-            }
-        });
-
-        // Hàm kiểm tra và thông báo về các mốc
-        async function checkMilestones(correctCount, message) {
-            const milestones = [5, 10, 50, 100];
-            for (const milestone of milestones) {
-                if (correctCount === milestone) {
-                    await message.channel.send(`Chúc mừng <@${message.author.id}> đã đạt mốc ${milestone} lần đúng! 🎉`);
-                }
-            }
+          if (data.LastPerson === message.author.id) {
+            message.react("<:downvote:1232649248869449738>");
+            message.reply(
+              `Bạn không thể nhập hai số trong một lượt, hãy chờ người khác chứ! Trò chơi sẽ bắt đầu lại từ **số 1**.`
+            );
+            data.Count = 1;
+            data.isNumberEntered = false;
+            data.LastPerson = "";
+          } else if (enteredNumber === 1 || enteredNumber === data.Count + 1) {
+            // Nếu số được nhập là số tiếp theo trong chuỗi, cập nhật dữ liệu
+            message.react("<:upvote:1232649233371234365>");
+            data.Count = enteredNumber;
+            data.isNumberEntered = true;
+            data.LastPerson = message.author.id;
+          } else {
+            // Nếu số được nhập không phải là số tiếp theo trong chuỗi, reset trò chơi
+            const nextNumber = data.Count + 1;
+            message.react("<:upvote:1232649233371234365>");
+            message.reply(
+              `Số tiếp theo là ${nextNumber}, không phải ${enteredNumber}`
+            );
+            data.Count = 1;
+            data.isNumberEntered = false;
+            data.LastPerson = "";
+          }
+        
+          await data.save();
+        } catch (err) {
+          console.error(err);
         }
-    },
+      }
+    });
+  },
 };
