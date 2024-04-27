@@ -1,0 +1,6 @@
+{
+    "token": "your-token-here",
+    "clientId": "your-client-id-here",
+    "guildId": "your-guild-id-here",
+    "mongodb": "your-mongodb-connection-string-here"
+}

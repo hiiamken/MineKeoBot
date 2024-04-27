@@ -39,20 +39,27 @@ module.exports = {
 
       const word = message.content.trim().toLowerCase();
 
+      if (this.lastWord && this.lastWord.slice(-1) !== word.charAt(0)) {
+        message.reply(
+          `Từ \`${word}\` không hợp lệ! Từ mới phải bắt đầu bằng âm tiết '${this.lastWord.slice(-1)}' của từ trước đó.`
+        );
+        return;
+      }
+
       // Kiểm tra từ có hợp lệ trước khi xử lý tiếp
       if (!(await checkValidWord(word))) {
-        message.react("<a:cerberusbap:1179405311933685880>");
-        message.channel.send(
-          `Từ \`${word}\` không hợp lệ, <@${message.author.id}>! Hãy nhập một từ tiếng Anh hợp lệ.`
+        message.react("<:downvote:1232649248869449738>");
+        message.reply(
+          `Từ \`${word}\` không hợp lệ! Hãy nhập một từ tiếng Anh hợp lệ.`
         );
         return; // Dừng xử lý nếu từ không hợp lệ
       }
 
       // Kiểm tra xem từ đã được sử dụng chưa
       if (data.UserWords && data.UserWords.has(word)) {
-        message.react("<a:cerberusbap:1179405311933685880>");
-        message.channel.send(
-          `Từ \`${word}\` đã được sử dụng, <@${message.author.id}>! Hãy nhập một từ khác.`
+        message.react("<:downvote:1232649248869449738>");
+        message.reply(
+          `Từ \`${word}\` đã được sử dụng! Hãy nhập một từ khác.`
         );
         return;
       }
@@ -67,16 +74,16 @@ module.exports = {
 
       // Kiểm tra nếu người chơi hiện tại là người chơi cuối cùng đã nhập từ đúng
       if (message.author.id === lastPlayerId) {
-        message.channel.send(
-          `Bạn không thể nhập hai từ liên tiếp, <@${message.author.id}>! Hãy chờ người khác nhập từ.`
+        message.reply(
+          `Bạn không thể nhập hai từ liên tiếp! Hãy chờ người khác nhập từ.`
         );
         return;
       }
 
       if (!(await checkValidWord(word))) {
-        message.react("<a:cerberusbap:1179405311933685880>");
-        message.channel.send(
-          `Từ \`${word}\` không hợp lệ, <@${message.author.id}>! Hãy nhập một từ tiếng Anh hợp lệ.`
+        message.react("<:downvote:1232649248869449738>");
+        message.reply(
+          `Từ \`${word}\` không hợp lệ! Hãy nhập một từ tiếng Anh hợp lệ.`
         );
         await data.save();
         return;
@@ -84,9 +91,9 @@ module.exports = {
 
       // Kiểm tra xem từ đã được sử dụng chưa
       if (playerState.enteredWords.includes(word)) {
-        message.react("<a:cerberusbap:1179405311933685880>");
-        message.channel.send(
-          `Từ \`${word}\` đã được sử dụng, <@${message.author.id}>! Bạn chỉ có thể nhập từ có chung đầu hoặc chung cuối với từ trước đó.`
+        message.react("<:downvote:1232649248869449738>");
+        message.reply(
+          `Từ \`${word}\` đã được sử dụng! Bạn chỉ có thể nhập từ có chung đầu hoặc chung cuối với từ trước đó.`
         );
         await data.save();
         return;
@@ -97,8 +104,9 @@ module.exports = {
 
       // Cập nhật ID người chơi cuối cùng đã nhập từ đúng
       lastPlayerId = message.author.id;
+      this.lastWord = word;
 
-      message.react("<:PinkCheck:1179406997997748336>");
+      message.react("<:upvote:1232649233371234365>");
       playerState.enteredWords.push(word);
 
       const userRanking = await RankingNoichu.findOneAndUpdate(

@@ -1,6 +1,13 @@
 const countingScheme = require("../../Models/Counting");
 const Ranking = require("../../Models/Ranking");
 
+let gameState = {
+  Count: 1,
+  LastPerson: null,
+  isNumberEntered: false,
+  justReset: false,
+};
+
 module.exports = {
   name: "messageCreate",
 
@@ -9,10 +16,7 @@ module.exports = {
 
     if (message.author.bot) return;
 
-    // Kiểm tra xem nội dung tin nhắn có phải là số hoặc biểu thức toán học không
-    const isNumberOrExpression = /^[\d+\-*/\s,^sqrt().]+$/.test(
-      message.content
-    );
+    const isNumberOrExpression = /^[\d+\-*/\s,^sqrt().()]+$/.test(message.content);
 
     countingScheme.findOne({ GuildID: guildId }, async (err, data) => {
       if (err) {
@@ -24,7 +28,6 @@ module.exports = {
 
       if (message.channel.id === data.Channel) {
         try {
-          // Thay thế "^" bằng "**", "pow" và "sqrt" bằng các toán tử tương ứng của JavaScript
           const replacedContent = message.content
             .replace(/\^/g, "**")
             .replace(/pow/g, "**")
@@ -33,32 +36,46 @@ module.exports = {
           const evaluatedNumber = eval(replacedContent);
           const enteredNumber = Math.round(evaluatedNumber);
 
-          if (data.LastPerson === message.author.id) {
+          if (gameState.LastPerson === message.author.id && gameState.isNumberEntered) {
+          
+            message.react("<:downvote:1232649248869449738>");
+            message.reply(`Bạn không thể nhập hai số trong một lượt, hãy chờ người khác chứ! Trò chơi sẽ bắt đầu lại từ **số 1**.`);
+            gameState.Count = 1;
+            gameState.isNumberEntered = false;
+            gameState.LastPerson = null; 
+            gameState.justReset = true; 
+          
+            data.Count = gameState.Count;
+            data.isNumberEntered = gameState.isNumberEntered;
+            data.LastPerson = gameState.LastPerson;
+            await data.save();
+          } else if (enteredNumber === 1 || (!gameState.justReset && enteredNumber === gameState.Count + 1)) {
+
+            message.react("<:upvote:1232649233371234365>");
+            gameState.Count = enteredNumber;
+            gameState.isNumberEntered = true;
+            gameState.LastPerson = message.author.id;
+
+            data.Count = gameState.Count;
+            data.isNumberEntered = gameState.isNumberEntered;
+            data.LastPerson = gameState.LastPerson;
+            await data.save();
+
+            gameState.justReset = false; 
+          } else {
+            const nextNumber = gameState.justReset ? 1 : gameState.Count + 1;
             message.react("<:downvote:1232649248869449738>");
             message.reply(
-              `Bạn không thể nhập hai số trong một lượt, hãy chờ người khác chứ! Trò chơi sẽ bắt đầu lại từ **số 1**.`
+              `Số tiếp theo là \`${nextNumber}\`, không phải \`${enteredNumber}\``
             );
-            data.Count = 1;
-            data.isNumberEntered = false;
-            data.LastPerson = "";
-          } else if (enteredNumber === 1 || enteredNumber === data.Count + 1) {
-            // Nếu số được nhập là số tiếp theo trong chuỗi, cập nhật dữ liệu
-            message.react("<:upvote:1232649233371234365>");
-            data.Count = enteredNumber;
-            data.isNumberEntered = true;
-            data.LastPerson = message.author.id;
-          } else {
-            // Nếu số được nhập không phải là số tiếp theo trong chuỗi, reset trò chơi
-            const nextNumber = data.Count + 1;
-            message.react("<:upvote:1232649233371234365>");
-            message.reply(
-              `Số tiếp theo là ${nextNumber}, không phải ${enteredNumber}`
-            );
-            data.Count = 1;
-            data.isNumberEntered = false;
-            data.LastPerson = "";
+            gameState.Count = 1;
+            gameState.isNumberEntered = false;
           }
-        
+
+          data.Count = gameState.Count;
+          data.LastPerson = gameState.LastPerson;
+          data.isNumberEntered = gameState.isNumberEntered;
+
           await data.save();
         } catch (err) {
           console.error(err);

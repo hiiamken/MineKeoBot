@@ -11,7 +11,7 @@ let usedWords = {};
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("noitu") 
-    .setDescription("Minigame nối từ.") 
+    .setDescription("Minigame nối từ.")   
     .addSubcommand((subcommand) =>
       subcommand
         .setName("setup")
