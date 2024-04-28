@@ -13,6 +13,7 @@
   "dependencies": {
     "@discordjs/builders": "^1.7.0",
     "@napi-rs/canvas": "^0.1.44",
+    "@napi-rs/canvas-darwin-arm64": "^0.1.52",
     "@sapphire/shapeshift": "^3.9.3",
     "ascii-table": "^0.0.9",
     "axios": "^1.6.2",
