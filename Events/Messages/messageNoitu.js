@@ -9,6 +9,7 @@ let playerStates = {};
 let usedWords = {};
 let playerUsedWords = {};
 let lastPlayerId = null;
+let lastUsedWord = null;
 
 if (!fs.existsSync(dictionaryPath)) {
   process.exit(1);
@@ -22,7 +23,7 @@ const vietnameseWords = vietnameseWordsData
   .filter((wordData) => wordData.trim() !== "")
   .map((wordData) => {
     try {
-      const word = JSON.parse(wordData).text;
+      const word = JSON.parse(wordData).text.toLowerCase();
       return word;
     } catch (error) {
       return null;
@@ -46,10 +47,11 @@ module.exports = {
       }
 
       if (message.author.bot) {
+        lastUsedWord = message.content.trim().toLowerCase();
         return;
       }
 
-      const word = message.content.trim();
+      const word = message.content.trim().toLowerCase();
 
       const emojiRegex = /<:[a-zA-Z0-9_]+:[0-9]+>/g;
       if (emojiRegex.test(word)) {
@@ -62,13 +64,48 @@ module.exports = {
       }
 
       if (["!gg", "!dauhang", "!thua", "!reset"].includes(word)) {
-        const playerUsedWordsCount = Object.keys(playerUsedWords).length;
-        message.reply(`Nice try, tôi và bạn đã sử dụng tất cả ${playerUsedWordsCount} từ trong lượt này`);
-        usedWords = {};
+        const lastWordBeforeGG = lastUsedWord.split(" ").pop();
+      
+        const possibleWords = vietnameseWords.filter(
+          (vWord) => vWord.split(" ")[0] === lastWordBeforeGG && vWord.split(" ").length === 2
+        );
+      
+        let selectedWords = possibleWords;
+        if (possibleWords.length > 10) {
+          selectedWords = [];
+          for (let i = 0; i < 10; i++) {
+            const randomIndex = Math.floor(Math.random() * possibleWords.length);
+            selectedWords.push(possibleWords[randomIndex]);
+            possibleWords.splice(randomIndex, 1);
+          }
+        }
+      
+        let possibleWordsMessage = "";
+        const successMessages = [
+          "Nice try! Bạn có thể sử dụng các từ sau để nối: ",
+          "Gà quá, bạn có thể sử dụng các từ như ",
+          "Tiếng Việt bạn kém quá, bạn có thể sử dụng các từ như "
+        ];
+        const failMessages = [
+          "Tôi bó tay, không tìm thấy từ nào phù hợp để nối",
+          "Khó quá nhỉ, tôi cũng không tìm được từ nào phù hợp",
+          "Hãy bắt đầu lại với một từ dễ hơn nào!"
+        ];
+      
+        if (selectedWords.length > 0) {
+          const nextWord = "`" + selectedWords.join("`, `") + "`";
+          const randomSuccessMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
+          possibleWordsMessage = `${randomSuccessMessage}${nextWord}`;
+        } else {
+          const randomFailMessage = failMessages[Math.floor(Math.random() * failMessages.length)];
+          possibleWordsMessage = randomFailMessage;
+        }
+      
+        message.reply(possibleWordsMessage);
+        message.react("<:gg:1233974572387405918>");
         playerUsedWords = {};
         lastPlayerId = null;
         botHasPlayed = false;
-        message.react("<:gg:1233974572387405918>");
         return;
       }
 
@@ -91,14 +128,13 @@ module.exports = {
             const nextWord =
               possibleWords[Math.floor(Math.random() * possibleWords.length)];
 
-              message.reply(nextWord);
-              message.react("<:upvote:1232649233371234365>");
-              usedWords[nextWord] = true;
-              lastPlayerId = message.author.id;
-              botHasPlayed = true;
+            message.reply(nextWord);
+            message.react("<:upvote:1232649233371234365>");
+            usedWords[nextWord] = true;
+            lastPlayerId = message.author.id;
+            botHasPlayed = true;
           } else {
-            const playerUsedWordsCount = Object.keys(playerUsedWords).length;
-            message.reply(`Tôi đầu hàng. Bạn đã sử dụng tất cả ${playerUsedWordsCount} từ trong lượt này`);
+            message.reply(`Tôi đầu hàng.`);
             message.react("<:gg:1233974572387405918>");
             usedWords = {};
             playerUsedWords = {};
@@ -107,7 +143,9 @@ module.exports = {
           }
         }, 1000);
       } else {
-        message.reply(`Từ \`${word}\` không có trong từ điển, vui lòng chọn từ khác`);
+        message.reply(
+          `Từ \`${word}\` không có trong từ điển, vui lòng chọn từ khác`
+        );
         message.react("<:downvote:1232649248869449738>");
       }
 

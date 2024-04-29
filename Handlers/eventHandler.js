@@ -1,3 +1,5 @@
+const path = require('path');
+
 function loadEvents(client) {
     const ascii = require('ascii-table');
     const fs = require('fs');
@@ -5,10 +7,15 @@ function loadEvents(client) {
 
     const folders = fs.readdirSync('./Events');
     for (const folder of folders) {
-        const files = fs.readdirSync(`./Events/${folder}`).filter((file) => file.endsWith(".js"));
+        const folderPath = `./Events/${folder}`;
+        const stat = fs.lstatSync(folderPath);
+        if (!stat.isDirectory()) {
+            continue;
+        }
+        const files = fs.readdirSync(folderPath).filter((file) => file.endsWith(".js"));
 
         for (const file of files) {
-            const event = require(`../Events/${folder}/${file}`);
+            const event = require(path.join('..', folderPath, file));
 
             if (event.rest) {
                 if (event.once)
@@ -25,7 +32,6 @@ function loadEvents(client) {
                 else client.on(event.name, (...args) => event.execute (...args, client));
             }
             table.addRow(file, "Sẵn sàng");
-            continue;
         }
     }
     return console.log(table.toString(), "\nCác sự kiện đã load thành công");
