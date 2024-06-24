@@ -24,7 +24,7 @@ module.exports = {
             { type: ActivityType.Playing, name: 'tại MineKeo.com' },
             { type: ActivityType.Custom, name: 'customname', state: 'Khò khò' },
             { type: ActivityType.Custom, name: 'customname', state: 'Cherry sắp ra mắt rồi!' },
-            { type: ActivityType.Custom, name: 'customname', state: 'Kitkat chuẩn bị bước sang mùa 5!' },
+            { type: ActivityType.Custom, name: 'customname', state: 'Hí anh em!' },
             // Thêm các status khác tùy ý
         ];
 
