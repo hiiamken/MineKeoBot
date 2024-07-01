@@ -9,11 +9,9 @@ module.exports = {
         const gioithieu = '1122041534288764958';
         const nhanrole = '1106803900322951169';
         const hoidap = '1167855017848487947';
-        const memberRole = '1121769384646561843';
 
-        // Kiểm tra nếu member có id trước khi sử dụng nó trong chuỗi
-        const welcomeMessage = "Hi vọng cậu sẽ có những trải nghiệm đáng nhớ tại MineKeo NetWork!";
-
+        const welcomeMessage = `Hi vọng ${member.toString()} sẽ có những trải nghiệm đáng nhớ tại MineKeo NetWork!`;
+        
         const welcomeEmbed = new EmbedBuilder()
             .setAuthor({ name: `Chào cậu, ${member.displayName}!`, iconURL: 'https://cdn.discordapp.com/attachments/1174937441556238396/1174941493660766218/logo_1500x1500.png?ex=65696c89&is=6556f789&hm=ea7a182a97eb4d2f81b82060e96d3934462b2efb8b8c25c901ff57903847c8d1' })
             .setDescription(welcomeMessage)
@@ -22,7 +20,7 @@ module.exports = {
                 { name: 'IP PC', value: 'minekeo.com', inline: true },
                 { name: 'IP PE', value: 'pe.minekeo.com', inline: true },
                 { name: 'Thông tin máy chủ:', value: `<#${gioithieu}>` },
-                { name: 'Nhận role các cụm đang chơi:', value: `<#${nhanrole}>` }, // Thêm trường mới cho ID của kênh
+                { name: 'Nhận role các cụm đang chơi:', value: `<#${nhanrole}>` },
                 { name: 'Các câu hỏi thường gặp:', value: `<#${hoidap}>` }
             )
             .setThumbnail(member.user.displayAvatarURL())
@@ -33,6 +31,5 @@ module.exports = {
             });
 
         welcomeChannel.send({ embeds: [welcomeEmbed] });
-        member.roles.add(memberRole);
     }
 }

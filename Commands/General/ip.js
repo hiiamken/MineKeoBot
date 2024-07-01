@@ -30,10 +30,10 @@ module.exports = {
       )
       .setColor(0xecb2fb)
       .addFields(
-        { name: "IP Máy tính (PC)", value: "minekeo.com", inline: true },
+        { name: "IP Máy tính (PC)", value: "minekeo.com | 1.7.x - 1.21", inline: true },
         {
           name: "IP Điện thoại (PE)",
-          value: "pe.minekeo.com (19132)",
+          value: "pe.minekeo.com (19132) | 1.20.80 - 1.21.0",
           inline: true,
         }
       )

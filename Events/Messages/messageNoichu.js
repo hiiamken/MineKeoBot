@@ -132,7 +132,6 @@ async function isValidWordInDictionary(word) {
 
     return hasDefinition;
   } catch (error) {
-    console.error(error);
     return false;
   }
 }
