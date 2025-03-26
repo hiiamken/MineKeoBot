@@ -1,0 +1,70 @@
+{
+  "antiNuke": {
+    "dangerousActionThreshold": 3,
+    "autoBanThreshold": 25,
+    "monitoredEvents": [
+      "CHANNEL_CREATE",
+      "CHANNEL_DELETE",
+      "ROLE_CREATE",
+      "ROLE_DELETE",
+      "MEMBER_BAN_ADD",
+      "WEBHOOK_CREATE",
+      "WEBHOOK_DELETE",
+      "MEMBER_KICK",
+      "ROLE_UPDATE",
+      "WEBHOOK_UPDATE",
+      "EMOJI_UPDATE",
+      "STICKER_UPDATE",
+      "MEMBER_UPDATE",
+      "GUILD_UPDATE",
+      "CHANNEL_OVERWRITE_UPDATE"
+    ],
+    "whitelistedUsers": [
+      "453380710024347658"
+    ],
+    "whitelistedRoles": [],
+    "quarantineRoleName": "Quarantine",
+    "lockdown": {
+      "lastBackupId": "Unknown_20250325_1122_1PZM"
+    },
+    "adaptiveThreshold": true,
+    "maxActionsPerMinute": 10,
+    "antiWebhook": {
+      "maxWebhookPerMinute": 5
+    }
+  },
+  "backup": {
+    "backupIntervalMinutes": 60,
+    "backupOnPanic": true,
+    "messageBackupLimit": 250,
+    "backupRetentionDays": 30,
+    "storagePath": "./backups",
+    "backupComponents": [
+      "role_assignments",
+      "nicknames",
+      "bans",
+      "messages",
+      "threads",
+      "forum_posts",
+      "channels"
+    ]
+  },
+  "restore": {
+    "logChannelId": "1096806362060705904",
+    "requireApproval": true,
+    "suspiciousHours": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "pendingRequests": []
+  },
+  "logging": {
+    "logChannelId": "",
+    "reportMethod": "DM"
+  }
+}

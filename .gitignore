@@ -1,1 +1,23 @@
-config.json
+# 1) Environment
+.env
+
+# 2) Database, backups
+database.sqlite
+/backups/
+
+# 3) Node modules
+/node_modules/
+
+# 4) Nếu không muốn đẩy dist:
+# /dist/
+
+# 5) Các file config chứa bí mật (tùy bạn)
+ src/config/securityConfig.ts
+ src/config/config.ts
+ src/config/config.json
+ src/config/domain-list.json
+ src/config/suspicious-list.json
+
+# 6) Nếu có logs
+/logs/
+*.log
