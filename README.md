@@ -4,114 +4,86 @@
   </a>
 </p>
 
-<h1 align="center">MineKeoBot: Discord Security & Utility Bot</h1>
+<h1 align="center">MineKeoBot: The Ultimate Discord Security & Utility Bot</h1>
 
 <p align="center">
-  MineKeoBot là một bot Discord toàn năng, chuyên cung cấp các tính năng bảo vệ server (Anti-Nuke, Anti-Raid, Panic Mode), tự động backup & restore dữ liệu, hệ thống xác minh thành viên, và nhiều tiện ích khác.
+  MineKeoBot is a comprehensive, all-in-one Discord bot engineered to secure and streamline your server. With advanced anti-abuse systems, automated backup & restore, verification, and dynamic reaction roles, MineKeoBot delivers unparalleled protection and utility for modern communities.
   <br />
-  <a href="https://github.com/hiiamken/MineKeoBot/issues">🐞 Báo cáo lỗi / 💡 Đề xuất tính năng</a>
+  <a href="https://github.com/hiiamken/MineKeoBot/issues">🐞 Report Bugs / 💡 Request Features</a>
 </p>
 
 ---
 
-## 🌟 Giới Thiệu
+## 📖 Overview
 
-**MineKeoBot** được phát triển nhằm mục đích bảo vệ và nâng cao trải nghiệm quản trị trên Discord. Với nhiều tính năng ưu việt như Anti-Nuke, Anti-Raid, tự động backup & rollback, hệ thống verify (captcha, reaction role) và nhiều tính năng tiện ích khác, MineKeoBot giúp:
+**MineKeoBot** is built with cutting-edge technologies using Node.js and Discord.js. Originally designed for the MineKeo Network Minecraft server, it has evolved into a robust solution for:
   
-- **Bảo vệ server** khỏi hành vi phá hoại, spam và raid.
-- **Tự động backup** cấu hình server, cho phép khôi phục nhanh khi có sự cố.
-- **Hệ thống xác minh** thành viên thông minh, đảm bảo chỉ người thật được truy cập.
-- **Reaction Role** tiện lợi với chế độ “unique” nâng cao cho phép chuyển đổi role mượt mà.
-- Và nhiều tính năng tiện ích khác hỗ trợ quản trị và tăng cường sự tương tác.
+- **Server Security**: Prevent malicious actions (Anti-Nuke, Anti-Raid) and automatically initiate lockdowns & rollbacks.
+- **Data Integrity**: Regularly backup server configurations and provide rapid restoration in case of emergencies.
+- **Member Verification**: Ensure only legitimate members gain access with a custom, hassle-free verification system.
+- **Dynamic Reaction Roles**: Easily assign roles through reactions—with support for both multiple and unique role selections.
+- **Utility & Moderation**: An array of moderation commands and community engagement tools to keep your server thriving.
 
 ---
 
-## 🔥 Tính Năng Nổi Bật
+## ⚡ Key Features
 
-- **Anti-Nuke & Anti-Raid:**  
-  Phát hiện hành vi phá hoại, tính điểm risk (risk score) và tự động cách ly hoặc kích hoạt Panic Mode nếu cần, giúp bảo vệ server khỏi các cuộc tấn công đột xuất.
+- **Anti-Nuke & Anti-Raid**  
+  Detect and counteract mass-delete attacks and spam, preserving your server’s integrity.
   
-- **Panic Mode & Rollback:**  
-  Khi Panic Mode kích hoạt, bot tự động tạo snapshot backup, freeze các thành viên nghi ngờ và cho phép admin rollback nhanh chóng nếu có sự cố.
+- **Panic Mode & Automated Rollback**  
+  When under attack, trigger Panic Mode to freeze actions, capture rapid backups, and rollback to a safe state with a single command.
 
-- **Tự động Backup & Restore:**  
-  Backup dữ liệu server định kỳ, lưu trữ file JSON, tính checksum để đảm bảo tính toàn vẹn và hỗ trợ rollback toàn bộ hoặc từng phần.
+- **Scheduled & On-Demand Backups**  
+  Seamlessly back up your server’s roles, channels, permissions, and messages using SQLite for reliable, local data persistence.
 
-- **Hệ thống Verify:**  
-  Sử dụng captcha (theo hình ảnh động) hoặc qua hội thoại trong DM để xác minh thành viên, giúp lọc bot và spammer.
+- **Intuitive Member Verification**  
+  Reduce spam and bot intrusion with a user-friendly, DM-based verification process powered by captcha challenges.
 
-- **Reaction Role:**  
-  Tạo embed đăng ký role qua reaction với chế độ “normal” hoặc “unique”, cho phép người dùng nhận role dễ dàng, chuyển đổi role mượt mà và lưu dữ liệu Reaction Role lâu dài qua database.
+- **Custom Reaction Roles**  
+  Create interactive embed messages that allow users to claim or remove roles via reactions. Choose between “normal” (multiple roles) and “unique” (only one role at a time) modes.
 
-- **Hỗ trợ đa ngôn ngữ và nhiều tiện ích quản trị:**  
-  Bao gồm các lệnh như `/ask`, `/reply`, `/stats`, `/ranking-gpt`, và nhiều lệnh admin để quản lý dữ liệu và cấu hình server.
-
----
-
-## 🙋‍♂️ Từ Nhà Phát Triển
-
-Chào mừng bạn đến với MineKeoBot! Tôi là **TKen**, người phát triển bot này, ban đầu được tạo ra cho MineKeo Network Minecraft server. Tôi rất vui khi chia sẻ bot này cho cộng đồng Discord rộng rãi. Mọi ý kiến đóng góp, báo cáo lỗi và đề xuất tính năng đều được hoan nghênh qua [Discord MineKeo Network](https://discord.gg/minekeo).
+- **Comprehensive Moderation Tools**  
+  A suite of admin commands for kick, ban, mute, and more, paired with detailed logs for audit and rollback capabilities.
 
 ---
 
-## 🚀 Hướng Dẫn Sử Dụng
+## 🚀 Getting Started
 
-### 🔥 Lệnh Chính
+### Prerequisites
 
-| Lệnh                  | Mô tả                                                                                           | Prefix (nếu có) |
-| --------------------- | ------------------------------------------------------------------------------------------------ | --------------- |
-| `/ask`                | Đặt câu hỏi, có thể kèm hình ảnh; bot tạo thread mới cho cuộc trò chuyện.                        | `!ask`         |
-| `/reply`              | Tiếp tục cuộc trò chuyện trong thread hiện tại.                                                 | `!reply`       |
-| `/verify`             | Xác minh thành viên qua captcha trong DM để lọc bot và spam.                                     | -              |
-| `/reactionrole`       | Tạo embed đăng ký nhận role qua reaction với giao diện hội thoại (không dùng modal).              | -              |
-| `/backup`             | Quản lý backup dữ liệu server (tạo, danh sách, tải, xoá, tự động backup).                        | -              |
-| `/restore`            | Khôi phục dữ liệu server từ backup (có yêu cầu phê duyệt nếu cần).                                | -              |
-| `/antiraid`           | Tích hợp các lệnh chống raid, báo cáo và xử lý hành vi tấn công trên server.                      | -              |
-| `/antinuke`           | Tích hợp các lệnh chống nuke, báo cáo và xử lý hành vi phá hoại server.                           | -              |
+- **Node.js** (v18 or higher recommended)
+- A **Discord Bot Token** from the [Discord Developer Portal](https://discord.com/developers/applications)
+- **SQLite** (default database for local and lightweight production environments)
+- Appropriate bot permissions (ensure the bot's role is placed at the top)
 
-*Các lệnh admin và lệnh khác được liệt kê trong phần tài liệu riêng.*
+### Installation
 
----
-
-## 🛠️ Cài Đặt
-
-### 📋 Yêu Cầu
-
-- [Node.js](https://nodejs.org) (phiên bản 18 trở lên được khuyến nghị)
-- Discord Bot Token (từ [Discord Developer Portal](https://discord.com/developers/applications))
-- API Key của OpenAI & Google Gemini (nếu dùng các tính năng AI)
-- MySQL (cho production) hoặc SQLite (cho local)
-- Các quyền truy cập phù hợp (đảm bảo role của bot ở vị trí cao nhất)
-
-### 🔧 Các Bước Cài Đặt
-
-1. **Clone Repository:**
+1. **Clone the Repository:**
 
     ```bash
     git clone https://github.com/hiiamken/MineKeoBot.git
     cd MineKeoBot
     ```
 
-2. **Cài Đặt Dependencies:**
+2. **Install Dependencies:**
 
     ```bash
     npm install
     ```
 
-3. **Cấu Hình Environment:**
+3. **Set Up Environment Variables:**
 
-    - Tạo file `.env` bằng cách sao chép từ `.env.example`.
-    - Cập nhật các biến môi trường:
-      - `DISCORD_TOKEN`
-      - `OPENAI_API_KEY`
-      - `GOOGLE_API_KEY`
-      - `CLIENT_ID`, `GUILD_ID`, `ADMIN_USER_ID`,…
-      - Các thông tin cấu hình database nếu dùng MySQL.
+    - Create a `.env` file by copying `.env.example`.
+    - Update the necessary variables:
+      - `DISCORD_TOKEN`: Your Discord bot token.
+      - `CLIENT_ID`, `GUILD_ID`, `ADMIN_USER_ID`, etc.
+      - Other configuration variables as needed.
 
-4. **Cấu Hình File Config:**
+4. **Configure Bot Settings:**
 
-    - Nếu có file `config.ts` hoặc `securityConfig.ts`, chỉnh sửa sao cho phù hợp.
-    - Nếu file chứa thông tin nhạy cảm, hãy chuyển sang `.env` và tạo file mẫu `config.example.ts`.
+    - Adjust settings in your configuration files (e.g., `securityConfig.ts`, `config.ts`) to suit your server's needs.
+    - Ensure sensitive data is stored in the `.env` file and not committed publicly.
 
 5. **Deploy Slash Commands:**
 
@@ -119,7 +91,7 @@ Chào mừng bạn đến với MineKeoBot! Tôi là **TKen**, người phát tr
     node deploy-commands.js
     ```
 
-6. **Khởi Chạy Bot:**
+6. **Start the Bot:**
 
     ```bash
     node bot.js
@@ -127,26 +99,45 @@ Chào mừng bạn đến với MineKeoBot! Tôi là **TKen**, người phát tr
 
 ---
 
-## 🔗 Liên Kết Nhanh
+## 📚 Usage
 
-- [Node.js](https://nodejs.org/)
-- [Discord.js](https://discord.js.org/)
-- [OpenAI Platform](https://platform.openai.com/)
-- [Google Gemini](https://ai.google.dev/)
-- [MySQL](https://www.mysql.com/)
-- [SQLite](https://www.sqlite.org/)
+MineKeoBot comes with a host of commands to manage your server. Here are some examples:
+
+- **/verify**  
+  Initiate member verification through a DM-based captcha challenge.
+
+- **/reactionrole**  
+  Set up interactive reaction roles to let members self-assign roles easily.
+
+- **/backup** & **/restore**  
+  Create and manage backups of your server’s configuration, with options for scheduled or manual restoration.
+
+- **/antinuke** & **/antiraid**  
+  Protect your server by detecting and counteracting mass actions or raids automatically.
+
+For a full list of commands and their usage, refer to the command documentation within the bot or type `/help` in Discord.
 
 ---
 
-## 🤝 Đóng Góp
+## 🔗 Quick Links
 
-Các đóng góp, báo cáo lỗi, và đề xuất tính năng đều được hoan nghênh. Vui lòng gửi Pull Request hoặc mở Issue trên [GitHub repository](https://github.com/hiiamken/MineKeoBot).
+- [Discord Developer Portal](https://discord.com/developers/applications)
+- [Discord.js Documentation](https://discord.js.org/)
+- [Node.js](https://nodejs.org/)
+- [SQLite](https://www.sqlite.org/index.html)
+
+---
+
+## 🤝 Contributing
+
+Contributions, suggestions, and bug reports are always welcome!  
+Please open an issue or submit a pull request on the [GitHub repository](https://github.com/hiiamken/MineKeoBot).
 
 ---
 
 ## 📜 License
 
-Dự án này được cấp phép theo [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -166,5 +157,5 @@ Dự án này được cấp phép theo [MIT License](LICENSE).
 </p>
 
 <p align="center">
-  Được xây dựng với ❤️ bởi <a href="https://github.com/hiiamken">TKen</a>.
+  Built with ❤️ by <a href="https://github.com/hiiamken">TKen</a>.
 </p>
